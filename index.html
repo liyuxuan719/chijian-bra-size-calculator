@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="尺间胸围计算器：根据下胸围与胸围测量值，快速估算 CN、EU、US、UK 参考尺码。所有计算均在浏览器本地完成。"
+    />
+    <meta name="theme-color" content="#17382f" />
+    <meta property="og:title" content="尺间 · 胸围计算器" />
+    <meta
+      property="og:description"
+      content="量得准，穿得对。输入两条身体测量数据，获得清晰的参考尺码与试穿提示。"
+    />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="preload" as="image" href="atelier.jpg" />
+    <link rel="stylesheet" href="styles.css" />
+    <script type="module" src="app.js"></script>
+    <title>尺间 · 胸围计算器</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#calculator">跳到计算器</a>
+
+    <header class="site-header">
+      <a class="brand" href="#" aria-label="尺间胸围计算器首页">
+        <span class="brand-mark" aria-hidden="true">尺</span>
+        <span class="brand-copy">
+          <strong>尺间</strong>
+          <small>THE SIZE ROOM</small>
+        </span>
+      </a>
+
+      <nav class="header-nav" aria-label="辅助导航">
+        <button class="nav-link" type="button" data-dialog-open="guide-dialog">
+          测量指南
+        </button>
+        <button class="nav-link" type="button" data-dialog-open="chart-dialog">
+          尺码对照
+        </button>
+      </nav>
+
+      <p class="privacy-note">
+        <span aria-hidden="true"></span>
+        本地计算 · 不上传数据
+      </p>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="eyebrow">Bra size calculator · 01</p>
+          <h1 id="page-title">
+            把自己，<br />
+            <em>量得刚刚好。</em>
+          </h1>
+          <p class="hero-intro">
+            两条软尺数据，一次清楚换算。尺码不是标准答案，合身才是。
+          </p>
+        </div>
+
+        <ol class="hero-steps" aria-label="计算步骤">
+          <li>
+            <span>01</span>
+            <div>
+              <strong>量底围</strong>
+              <p>软尺水平贴体</p>
+            </div>
+          </li>
+          <li>
+            <span>02</span>
+            <div>
+              <strong>量胸围</strong>
+              <p>经过胸部最高点</p>
+            </div>
+          </li>
+          <li>
+            <span>03</span>
+            <div>
+              <strong>看参考</strong>
+              <p>结合试穿调整</p>
+            </div>
+          </li>
+        </ol>
+
+        <div class="ruler" aria-hidden="true">
+          <span>55</span>
+          <span>65</span>
+          <span>75</span>
+          <span>85</span>
+          <span>95</span>
+          <span>105</span>
+          <span>115</span>
+          <span>125</span>
+        </div>
+      </section>
+
+      <section class="calculator-shell" id="calculator" aria-label="胸围尺码计算器">
+        <div class="input-panel">
+          <header class="panel-heading">
+            <span class="panel-index">01</span>
+            <div>
+              <p class="panel-kicker">Your measurements</p>
+              <h2>输入身体测量</h2>
+            </div>
+            <div class="unit-switch" role="group" aria-label="测量单位">
+              <button
+                class="unit-option is-active"
+                type="button"
+                data-unit="cm"
+                aria-pressed="true"
+              >
+                cm
+              </button>
+              <button
+                class="unit-option"
+                type="button"
+                data-unit="in"
+                aria-pressed="false"
+              >
+                in
+              </button>
+            </div>
+          </header>
+
+          <p class="form-intro">保持自然站立，软尺平行地面。结果会随输入自动更新。</p>
+
+          <form id="size-form" novalidate>
+            <div class="measurement-row">
+              <div class="measurement-topline">
+                <div class="measurement-title">
+                  <span class="metric-letter">A</span>
+                  <div>
+                    <label for="underbust">下胸围</label>
+                    <p>沿胸部下缘，水平绕身体一周</p>
+                  </div>
+                </div>
+                <div class="number-field">
+                  <input
+                    id="underbust"
+                    name="underbust"
+                    type="number"
+                    inputmode="decimal"
+                    min="55"
+                    max="150"
+                    step="0.5"
+                    value="75"
+                    aria-describedby="underbust-hint form-status"
+                  />
+                  <span data-unit-label>cm</span>
+                </div>
+              </div>
+              <div class="range-row">
+                <input
+                  id="underbust-range"
+                  class="range-input"
+                  type="range"
+                  min="55"
+                  max="150"
+                  step="0.5"
+                  value="75"
+                  aria-label="拖动调整下胸围"
+                />
+                <div class="range-limits" id="underbust-hint">
+                  <span data-range-min>55</span>
+                  <span data-range-max>150</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="measurement-row">
+              <div class="measurement-topline">
+                <div class="measurement-title">
+                  <span class="metric-letter">B</span>
+                  <div>
+                    <label for="bust">胸围</label>
+                    <p>经过胸部最高点，保持软尺水平</p>
+                  </div>
+                </div>
+                <div class="number-field">
+                  <input
+                    id="bust"
+                    name="bust"
+                    type="number"
+                    inputmode="decimal"
+                    min="60"
+                    max="160"
+                    step="0.5"
+                    value="90"
+                    aria-describedby="bust-hint form-status"
+                  />
+                  <span data-unit-label>cm</span>
+                </div>
+              </div>
+              <div class="range-row">
+                <input
+                  id="bust-range"
+                  class="range-input"
+                  type="range"
+                  min="60"
+                  max="160"
+                  step="0.5"
+                  value="90"
+                  aria-label="拖动调整胸围"
+                />
+                <div class="range-limits" id="bust-hint">
+                  <span data-range-min>60</span>
+                  <span data-range-max>160</span>
+                </div>
+              </div>
+            </div>
+          </form>
+
+          <div class="measurement-tips" aria-label="测量提示">
+            <p>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 21h16M6 17h12M8 21V9m8 12V9M5 5h14v4H5z" />
+              </svg>
+              贴合但不勒紧
+            </p>
+            <p>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M20 4c-7.5 0-14 5.5-14 12 0 2.2 1.8 4 4 4 6.5 0 10-6.5 10-16Z" />
+                <path d="M5 21c2-5 5-8 10-10" />
+              </svg>
+              自然呼气后测量
+            </p>
+          </div>
+
+          <div class="form-status" id="form-status" role="status" aria-live="polite">
+            当前杯差 <strong>15 cm</strong>
+          </div>
+
+          <button class="primary-action" id="calculate-button" type="button">
+            <span>查看我的参考尺码</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </button>
+        </div>
+
+        <aside class="result-panel" aria-label="尺码计算结果">
+          <div class="result-visual">
+            <img
+              src="atelier.jpg"
+              alt="成衣工作室中的布料与服装陈列"
+              width="1400"
+              height="1050"
+            />
+            <div class="visual-scrim"></div>
+            <div class="visual-caption">
+              <span>Atelier note / 01</span>
+              <span>Fit, not size.</span>
+            </div>
+
+            <div class="measurement-line" aria-hidden="true">
+              <span></span>
+              <small>BUST</small>
+            </div>
+
+            <div class="size-lockup">
+              <p class="size-overline">你的参考尺码</p>
+              <div class="size-value">
+                <span id="result-band">75</span>
+                <span id="result-cup">C</span>
+              </div>
+              <p id="result-summary">下胸围 75 cm · 胸围 90 cm</p>
+            </div>
+          </div>
+
+          <div class="result-content">
+            <header class="result-heading">
+              <div>
+                <p class="panel-kicker">Size conversion</p>
+                <h2>参考换算</h2>
+              </div>
+              <span class="live-badge">
+                <span aria-hidden="true"></span>
+                实时
+              </span>
+            </header>
+
+            <dl class="conversion-grid">
+              <div class="conversion-primary">
+                <dt>中国 CN</dt>
+                <dd id="size-cn">75C</dd>
+              </div>
+              <div>
+                <dt>欧洲 EU</dt>
+                <dd id="size-eu">75C</dd>
+              </div>
+              <div>
+                <dt>美国 US</dt>
+                <dd id="size-us">34C</dd>
+              </div>
+              <div>
+                <dt>英国 UK</dt>
+                <dd id="size-uk">34C</dd>
+              </div>
+            </dl>
+
+            <section class="cup-difference" aria-labelledby="difference-title">
+              <div class="difference-heading">
+                <h3 id="difference-title">上下胸围差</h3>
+                <strong id="difference-value">15 cm</strong>
+              </div>
+              <div class="cup-ruler" aria-hidden="true">
+                <span>A</span>
+                <span>B</span>
+                <span>C</span>
+                <span>D</span>
+                <span>E</span>
+                <span>F</span>
+                <span>G</span>
+                <i id="cup-marker"></i>
+              </div>
+            </section>
+
+            <div class="fit-note">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z" />
+                <path d="M12 16v-4M12 8h.01" />
+              </svg>
+              <div>
+                <p>试穿提示</p>
+                <span id="fit-advice"
+                  >杯型与底围贴合即可。不同品牌的版型通常会有约 1 个尺码的偏差。</span
+                >
+              </div>
+            </div>
+
+            <div class="result-actions">
+              <button class="secondary-action" id="copy-button" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect width="14" height="14" x="8" y="8" rx="2" />
+                  <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
+                </svg>
+                <span>复制结果</span>
+              </button>
+              <button class="text-action" type="button" data-dialog-open="guide-dialog">
+                测量方法
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7 17 17 7M7 7h10v10" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="fit-philosophy" aria-labelledby="philosophy-title">
+        <p class="eyebrow">A better fit starts here</p>
+        <h2 id="philosophy-title">尺码是起点，<br />试穿才是答案。</h2>
+        <div class="philosophy-copy">
+          <p>
+            胸型、肩带位置、面料弹性和品牌版型都会影响最终穿着感受。把计算结果当作筛选尺码的起点，再用两到三个相近尺码试穿。
+          </p>
+          <button class="inline-button" type="button" data-dialog-open="chart-dialog">
+            打开完整对照表
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </button>
+        </div>
+        <ol class="care-list" aria-label="试穿检查项">
+          <li><span>01</span>底围平直，不向上滑动</li>
+          <li><span>02</span>罩杯边缘自然贴合，不空杯</li>
+          <li><span>03</span>肩带不压肩，抬手不位移</li>
+        </ol>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div>
+        <a class="brand brand-footer" href="#" aria-label="返回页面顶部">
+          <span class="brand-mark" aria-hidden="true">尺</span>
+          <span class="brand-copy">
+            <strong>尺间</strong>
+            <small>THE SIZE ROOM</small>
+          </span>
+        </a>
+        <p>为更清楚的尺码选择而做。</p>
+      </div>
+      <div class="footer-links">
+        <button type="button" data-dialog-open="guide-dialog">测量指南</button>
+        <button type="button" data-dialog-open="chart-dialog">尺码对照</button>
+        <a href="README.md">项目说明</a>
+      </div>
+      <p class="footer-meta">LOCAL-FIRST · NO DATA COLLECTED · <span id="year"></span></p>
+    </footer>
+
+    <dialog class="modal" id="guide-dialog" aria-labelledby="guide-title">
+      <div class="modal-header">
+        <div>
+          <p class="panel-kicker">Measurement guide</p>
+          <h2 id="guide-title">怎样量得更准</h2>
+        </div>
+        <button class="icon-button" type="button" data-dialog-close aria-label="关闭测量指南">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ol class="guide-steps">
+          <li>
+            <span>01</span>
+            <div>
+              <h3>穿薄杯或无衬垫内衣</h3>
+              <p>保持自然胸型。如果没有穿着内衣，也可以直接测量，但建议每次使用同样的测量条件。</p>
+            </div>
+          </li>
+          <li>
+            <span>02</span>
+            <div>
+              <h3>先量下胸围</h3>
+              <p>将软尺放在胸部下方，水平绕肋骨一周。正常呼气，尺带贴合皮肤但可以容纳一根手指。</p>
+            </div>
+          </li>
+          <li>
+            <span>03</span>
+            <div>
+              <h3>再量胸围</h3>
+              <p>软尺经过胸部最高点水平绕一周，不要压扁胸部，也不要让后背的尺带向下滑。</p>
+            </div>
+          </li>
+        </ol>
+        <div class="guide-note">
+          <strong>建议测两遍</strong>
+          <p>两次结果相差超过 2 cm 时，重新调整软尺位置再测一次。身体两侧不完全对称很正常，以平均值为准。</p>
+        </div>
+        <div class="modal-actions">
+          <button class="primary-action modal-cta" type="button" data-dialog-close>
+            回到计算器
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog class="modal chart-modal" id="chart-dialog" aria-labelledby="chart-title">
+      <div class="modal-header">
+        <div>
+          <p class="panel-kicker">Reference chart</p>
+          <h2 id="chart-title">尺码对照表</h2>
+        </div>
+        <button class="icon-button" type="button" data-dialog-close aria-label="关闭尺码对照表">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="chart-section">
+          <h3>底围对照</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">CN / EU</th>
+                  <th scope="col">US</th>
+                  <th scope="col">UK</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>65</td><td>30</td><td>30</td></tr>
+                <tr><td>70</td><td>32</td><td>32</td></tr>
+                <tr><td>75</td><td>34</td><td>34</td></tr>
+                <tr><td>80</td><td>36</td><td>36</td></tr>
+                <tr><td>85</td><td>38</td><td>38</td></tr>
+                <tr><td>90</td><td>40</td><td>40</td></tr>
+                <tr><td>95</td><td>42</td><td>42</td></tr>
+                <tr><td>100</td><td>44</td><td>44</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="chart-section">
+          <h3>杯型参考</h3>
+          <div class="cup-chart">
+            <p><span>AA</span><strong>7.5 cm 及以下</strong></p>
+            <p><span>A</span><strong>7.5–10 cm</strong></p>
+            <p><span>B</span><strong>10–12.5 cm</strong></p>
+            <p><span>C</span><strong>12.5–15 cm</strong></p>
+            <p><span>D</span><strong>15–17.5 cm</strong></p>
+            <p><span>E</span><strong>17.5–20 cm</strong></p>
+            <p><span>F</span><strong>20–22.5 cm</strong></p>
+            <p><span>G</span><strong>22.5–25 cm</strong></p>
+          </div>
+        </div>
+        <p class="chart-disclaimer">
+          国际换算为近似参考。不同品牌、地区与版型可能采用不同杯级规则，建议结合品牌尺码表与试穿结果选择。
+        </p>
+      </div>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m5 12 4 4L19 6" />
+      </svg>
+      <span>结果已复制</span>
+    </div>
+  </body>
+</html>
