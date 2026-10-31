@@ -2,9 +2,10 @@ import {
   calculateSize,
   formatMeasurement,
   inchesToCm,
+  getSisterSizes,
 } from "./sizing.js";
+import { readMeasurements, saveMeasurements } from "./storage.js";
 
-const STORAGE_KEY = "chijian-measurements-v1";
 const RANGES = {
   underbust: { minCm: 55, maxCm: 150 },
   bust: { minCm: 60, maxCm: 160 },
@@ -34,6 +35,9 @@ const elements = {
   copyButton: document.querySelector("#copy-button"),
   toast: document.querySelector("#toast"),
   resultPanel: document.querySelector(".result-panel"),
+  sisterSizes: document.querySelector("#sister-sizes"),
+  remember: document.querySelector("#remember-measurements"),
+  forget: document.querySelector("#forget-measurements"),
 };
 
 let currentUnit = "cm";
@@ -47,22 +51,13 @@ let toastTimer = null;
 
 function readStoredMeasurements() {
   try {
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (!stored || !Number.isFinite(stored.underbust) || !Number.isFinite(stored.bust)) {
-      return;
-    }
-
-    if (stored.underbust >= 55 && stored.underbust <= 150) {
-      measurementsCm.underbust = stored.underbust;
-    }
-    if (stored.bust >= 60 && stored.bust <= 160) {
-      measurementsCm.bust = stored.bust;
-    }
-    if (stored.unit === "in" || stored.unit === "cm") {
-      currentUnit = stored.unit;
-    }
+    const stored = readMeasurements(localStorage);
+    if (!stored) return;
+    measurementsCm = { underbust: stored.underbust, bust: stored.bust };
+    currentUnit = stored.unit;
+    elements.remember.checked = true;
   } catch {
-    localStorage.removeItem(STORAGE_KEY);
+    // Accessing localStorage itself can throw when browser storage is blocked.
   }
 }
 
@@ -70,14 +65,11 @@ function storeMeasurements() {
   window.clearTimeout(storageTimer);
   storageTimer = window.setTimeout(() => {
     try {
-      localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify({
+      saveMeasurements(localStorage, {
           unit: currentUnit,
           underbust: measurementsCm.underbust,
           bust: measurementsCm.bust,
-        }),
-      );
+        }, elements.remember.checked);
     } catch {
       // Storage may be disabled in private browsing; measurement still works.
     }
@@ -187,6 +179,7 @@ function clearResult(errorMessage) {
     "输入有效的下胸围和胸围后，这里会给出针对杯型的试穿提示。";
   setFormStatus(errorMessage, "", true);
   elements.copyButton.disabled = true;
+  elements.sisterSizes.textContent = "输入有效数值后显示相邻试穿尺码。";
 }
 
 function renderResult(result, errorMessage) {
@@ -221,6 +214,15 @@ function renderResult(result, errorMessage) {
   elements.cupMarker.style.left = `${result.cupPosition}%`;
   elements.cupMarker.style.opacity = "1";
   elements.fitAdvice.textContent = result.fitAdvice;
+  elements.sisterSizes.replaceChildren();
+  for (const sister of getSisterSizes(result.band, result.cupIndex)) {
+    const item = document.createElement("li");
+    item.textContent = `${sister.fit}：${sister.sizes.cn}（CN / EU） · ${sister.sizes.us}（US） · ${sister.sizes.uk}（UK）`;
+    elements.sisterSizes.append(item);
+  }
+  if (!elements.sisterSizes.childElementCount) {
+    elements.sisterSizes.textContent = "此尺码已接近对照表边界，请按品牌尺码表试穿。";
+  }
   elements.copyButton.disabled = false;
   setFormStatus(
     "当前杯差 ",
@@ -359,6 +361,25 @@ for (const field of Object.keys(RANGES)) {
 
 elements.calculateButton.addEventListener("click", handleCalculateClick);
 elements.copyButton.addEventListener("click", copyResult);
+elements.remember.addEventListener("change", () => {
+  window.clearTimeout(storageTimer);
+  try {
+    const saved = saveMeasurements(localStorage, { ...measurementsCm, unit: currentUnit }, elements.remember.checked);
+    showToast(saved ? (elements.remember.checked ? "已开启本机保存" : "已关闭保存并移除本机记录") : "本机保存不可用，请检查浏览器设置");
+  } catch {
+    showToast("本机保存不可用，请检查浏览器设置");
+  }
+});
+elements.forget.addEventListener("click", () => {
+  window.clearTimeout(storageTimer);
+  elements.remember.checked = false;
+  try {
+    const cleared = saveMeasurements(localStorage, measurementsCm, false);
+    showToast(cleared ? "已移除本机记录；当前输入仍可继续计算" : "无法移除记录，请检查浏览器设置");
+  } catch {
+    showToast("无法访问本机记录，请检查浏览器设置");
+  }
+});
 
 document.addEventListener("click", (event) => {
   const openButton = event.target.closest("[data-dialog-open]");

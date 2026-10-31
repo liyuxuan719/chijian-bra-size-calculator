@@ -8,6 +8,7 @@ import {
   getCupByDifference,
   getReferenceSizes,
   inchesToCm,
+  getSisterSizes,
 } from "./sizing.js";
 
 test("calculates the default 75 / 90 cm measurement as 75C", () => {
@@ -23,6 +24,18 @@ test("calculates the default 75 / 90 cm measurement as 75C", () => {
     us: "34C",
     uk: "34C",
   });
+});
+
+test("suggests adjacent bands with opposite cup steps in each region", () => {
+  assert.deepEqual(getSisterSizes(75, 3), [
+    { fit: "底围更紧", sizes: { cn: "70D", eu: "70D", us: "32D", uk: "32D" } },
+    { fit: "底围更松", sizes: { cn: "80B", eu: "80B", us: "36B", uk: "36B" } },
+  ]);
+  assert.equal(getSisterSizes(55, 0).length, 0);
+  assert.equal(getSisterSizes(150, 12).length, 0);
+  assert.equal(getSisterSizes(75, 0).length, 1);
+  assert.deepEqual(getSisterSizes(75, NaN), []);
+  assert.deepEqual(getSisterSizes(73, 3), []);
 });
 
 test("rounds the underbust to the closest five-centimeter band", () => {

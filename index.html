@@ -238,6 +238,11 @@
               <path d="M5 12h14M13 6l6 6-6 6" />
             </svg>
           </button>
+          <div class="storage-controls">
+            <label><input id="remember-measurements" type="checkbox" /> 在此浏览器记住测量值</label>
+            <button class="text-action" id="forget-measurements" type="button">清除本机记录</button>
+            <p>新用户默认不保存；关闭开关即可移除已有记录。</p>
+          </div>
         </div>
 
         <aside class="result-panel" aria-label="尺码计算结果">
@@ -315,6 +320,12 @@
                 <span>G</span>
                 <i id="cup-marker"></i>
               </div>
+            </section>
+
+            <section class="sister-section" aria-labelledby="sister-title">
+              <h3 id="sister-title">相邻试穿尺码</h3>
+              <ul id="sister-sizes"></ul>
+              <p>相邻底围与杯级搭配仅作试穿参考，实际杯容和版型依品牌而异。</p>
             </section>
 
             <div class="fit-note">
