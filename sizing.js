@@ -122,6 +122,23 @@ export function getReferenceSizes(band, cupIndex) {
   };
 }
 
+// Adjacent bands with approximately similar cup volume, for trying on only.
+export function getSisterSizes(band, cupIndex) {
+  if (!Number.isInteger(band) || band < 55 || band > 150 || band % 5 !== 0 ||
+      !Number.isInteger(cupIndex) || cupIndex < 0 || cupIndex >= CN_CUPS.length) {
+    return [];
+  }
+  return [
+    { band: band - 5, index: cupIndex + 1, fit: "底围更紧" },
+    { band: band + 5, index: cupIndex - 1, fit: "底围更松" },
+  ].filter(({ band: candidateBand, index }) =>
+    candidateBand >= 55 && candidateBand <= 150 && index >= 0 && index < CN_CUPS.length,
+  ).map(({ band: candidateBand, index, fit }) => ({
+    fit,
+    sizes: getReferenceSizes(candidateBand, index),
+  }));
+}
+
 export function getFitAdvice(cupLabel) {
   return (
     CUP_FIT_ADVICE[cupLabel] ??

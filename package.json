@@ -1,6 +1,6 @@
 {
   "name": "chijian-bra-size-calculator",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A polished, privacy-first bra size calculator with CN, EU, US, and UK reference sizes.",
   "type": "module",
   "private": false,
@@ -10,7 +10,7 @@
   "scripts": {
     "start": "node server.mjs",
     "test": "node --test",
-    "check": "node --check app.js && node --check sizing.js"
+    "check": "node --check app.js && node --check sizing.js && node --check storage.js"
   },
   "keywords": [
     "bra-size-calculator",
