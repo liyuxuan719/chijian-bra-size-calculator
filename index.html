@@ -16,8 +16,8 @@
     <meta property="og:type" content="website" />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="preload" as="image" href="atelier.jpg" />
-    <link rel="stylesheet" href="styles.css" />
-    <script type="module" src="app.js"></script>
+    <link rel="stylesheet" href="styles.css?v=2.0-ui1" />
+    <script type="module" src="app.js?v=2.0-ui1"></script>
     <title>尺间 · 胸围计算器</title>
   </head>
   <body>
@@ -58,6 +58,7 @@
           <p class="hero-intro">
             两条软尺数据，一次清楚换算。尺码不是标准答案，合身才是。
           </p>
+          <button class="hero-guide-link" type="button" data-dialog-open="guide-dialog">查看测量指南</button>
         </div>
 
         <ol class="hero-steps" aria-label="计算步骤">
@@ -232,8 +233,14 @@
             当前杯差 <strong>15 cm</strong>
           </div>
 
+          <section class="inline-result" aria-label="当前参考尺码">
+            <p>当前参考尺码 · CN / EU</p>
+            <strong id="inline-size">75C</strong>
+            <span id="inline-result-hint">点击下方按钮查看其他地区与相邻尺码。</span>
+          </section>
+
           <button class="primary-action" id="calculate-button" type="button">
-            <span>查看我的参考尺码</span>
+            <span>查看完整换算与试穿建议</span>
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M5 12h14M13 6l6 6-6 6" />
             </svg>

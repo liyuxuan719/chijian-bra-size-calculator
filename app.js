@@ -38,6 +38,8 @@ const elements = {
   sisterSizes: document.querySelector("#sister-sizes"),
   remember: document.querySelector("#remember-measurements"),
   forget: document.querySelector("#forget-measurements"),
+  inlineSize: document.querySelector("#inline-size"),
+  inlineHint: document.querySelector("#inline-result-hint"),
 };
 
 let currentUnit = "cm";
@@ -165,6 +167,8 @@ function setFormStatus(text, highlight = "", isError = false) {
 
 function clearResult(errorMessage) {
   currentResult = null;
+  elements.inlineSize.textContent = "—";
+  elements.inlineHint.textContent = errorMessage || "请检查测量数值后继续。";
   elements.resultBand.textContent = "—";
   elements.resultCup.textContent = "";
   elements.resultSummary.textContent = "请检查测量数值";
@@ -196,6 +200,8 @@ function renderResult(result, errorMessage) {
   }
 
   currentResult = result;
+  elements.inlineSize.textContent = result.sizes.cn;
+  elements.inlineHint.textContent = "点击下方按钮查看其他地区与相邻尺码。";
   for (const field of Object.keys(RANGES)) {
     elements[field].removeAttribute("aria-invalid");
   }

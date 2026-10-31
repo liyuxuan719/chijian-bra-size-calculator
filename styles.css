@@ -272,6 +272,37 @@ svg {
   line-height: 1.8;
 }
 
+.hero-guide-link {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin-top: 14px;
+  padding: 0 16px;
+  border: 1px solid var(--line-dark);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--pine);
+  font-size: 14px;
+}
+
+.inline-result {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px 14px;
+  align-items: center;
+  margin: 12px 0 16px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--sage-light);
+  color: var(--pine);
+}
+
+.inline-result p { margin: 0; font-size: 13px; }
+.inline-result strong { grid-column: 2; grid-row: 1 / 3; font-size: 32px; line-height: 1.1; }
+.inline-result span { color: var(--muted); font-size: 12px; line-height: 1.6; }
+
 .hero-steps {
   display: grid;
   gap: 0;
@@ -780,7 +811,7 @@ svg {
 .size-lockup > p:last-child {
   margin: 8px 0 0;
   color: rgba(255, 253, 248, 0.7);
-  font-size: 10px;
+  font-size: 13px;
 }
 
 .result-content {
@@ -1835,12 +1866,48 @@ thead {
   align-items: center;
   gap: 8px;
   margin-bottom: 12px;
+  min-height: 44px;
 }
 .storage-controls input { width: 18px; height: 18px; accent-color: #17382f; }
 .storage-controls p, .sister-section p { margin-top: 10px; color: var(--muted); font-size: 12px; }
 .sister-section h3 { font-size: 16px; margin-bottom: 10px; }
 .sister-section ul { padding-left: 18px; }
 .sister-section li + li { margin-top: 8px; }
+
+.unit-option, .secondary-action, .text-action, .icon-button, .nav-link {
+  min-height: 44px;
+}
+.icon-button { min-width: 44px; }
+.form-intro, .measurement-title p, .range-limits, .measurement-tips p,
+.fit-note p, .fit-note span, .conversion-grid dt, .result-actions button {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+@media (max-width: 900px) {
+  .hero-guide-link { display: inline-flex; }
+}
+
+@media (max-width: 680px) {
+  .hero { min-height: 0; gap: 0; padding: 22px 20px 24px; }
+  .hero h1 { margin: 8px 0 10px; font-size: 36px; line-height: 1.1; }
+  .hero-intro { font-size: 14px; }
+  .hero-steps, .hero .ruler { display: none; }
+  .calculator-shell { margin-top: 0; }
+  .measurement-row { padding: 16px 0; }
+  .result-visual { min-height: 220px; }
+  .result-visual > img { position: absolute; inset: 0; min-height: 0; height: 100%; }
+  .visual-caption, .measurement-line { display: none; }
+  .size-lockup { right: 22px; bottom: 22px; left: 22px; }
+  .size-value { min-height: 0; margin-top: 10px; }
+  .size-value span:first-child { font-size: 68px; }
+  .size-value span:last-child { font-size: 46px; }
+  .size-overline { font-size: 13px; }
+  .result-actions { align-items: stretch; }
+  .result-actions button { justify-content: center; }
+  .sister-section { margin-top: 18px; }
+  .storage-controls .text-action { padding-inline: 8px; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   html {
